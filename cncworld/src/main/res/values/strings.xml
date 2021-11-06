@@ -5,4 +5,6 @@
     <string name="dbURL">https://cnc-world-api.herokuapp.com/api/tables/</string>
     <string name="textview1">"Connecting to database…\nPlease wait"</string>
     <string name="textview2">"Connected!"</string>
+    <string name="multiselect_hint">aaaaaaaaa</string>
+    <string name="no_text">Enter text please</string>
 </resources>
