@@ -2,9 +2,10 @@
     <string name="app_name">CNC World</string>
     <string name="label">label_hint</string>
     <string name="button">Button</string>
-    <string name="dbURL">https://cnc-world-api.herokuapp.com/api/tables/</string>
+    <string name="tablesURL">https://cnc-world-api.herokuapp.com/api/tables/</string>
+    <string name="fieldsURL">https://cnc-world-api.herokuapp.com/api/table_desc/</string>
+    <string name="connectionURL">https://cnc-world-api.herokuapp.com/api/docs/</string>
     <string name="textview1">"Connecting to database…\nPlease wait"</string>
-    <string name="textview2">"Connected!"</string>
-    <string name="multiselect_hint">aaaaaaaaa</string>
+    <string name="multiselect_hint">Field select</string>
     <string name="no_text">Enter text please</string>
 </resources>
