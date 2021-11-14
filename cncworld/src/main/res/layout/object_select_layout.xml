@@ -37,10 +37,9 @@
         android:layout_below="@id/multiselect"
         android:layout_marginTop="16dp"
         android:minHeight="48dp"
-        tools:ignore="MissingConstraints,SpeakableTextPresentCheck"
-        android:autofillHints=""
-        android:inputType="text"
-        android:hint="@string/label"/>
+        android:hint="@string/label"
+        android:ems="10"
+        android:inputType="text"/>
 
     <Button
         android:id="@+id/selectButton"

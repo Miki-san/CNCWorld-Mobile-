@@ -3,8 +3,9 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/BD/CNCWorld/cncworld/src/main/res/layout/object_select_layout.xml" value="0.6666666666666666" />
+        <entry key="..\:/BD/CNCWorld/cncworld/src/main/res/layout/object_select_layout.xml" value="0.3333333333333333" />
         <entry key="..\:/BD/CNCWorld/cncworld/src/main/res/layout/start_layout.xml" value="0.5546875" />
+        <entry key="..\:/BD/CNCWorld/cncworld/src/main/res/layout/table_layout.xml" value="0.5427083333333333" />
       </map>
     </option>
   </component>

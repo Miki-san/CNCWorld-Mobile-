@@ -22,17 +22,20 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 
 public class MainActivity extends AppCompatActivity {
     private Spinner spinner;
     private TextView multiselect, statusText, textField;
     private Button selectButton;
-    private boolean getDataFlag = false, URLConnectionFlag = false;
+    private volatile boolean getDataFlag = false, URLConnectionFlag = false;
     private JSONArray dataFromJSON;
     private String[] tables, fields;
     private boolean[] selectedFields;
     private ArrayList<Integer> fieldsList;
+    private String requestSQL, requestFields, requestTable;
+
 
     class ConnectByURL extends AsyncTask<String, String, String> {
         @Override
@@ -166,6 +169,14 @@ public class MainActivity extends AppCompatActivity {
         new ConnectByURL().execute(connectionURL);
         while (!URLConnectionFlag) {
         }
+        URLConnectionFlag = false;
+    }
+
+    public void dataConnection(String dataURL){
+        new GetDataByURL().execute(dataURL);
+        while (!getDataFlag) {
+        }
+        getDataFlag = false;
     }
 
     public void createMultiselectDropDownList(){
@@ -178,29 +189,37 @@ public class MainActivity extends AppCompatActivity {
                 if (b) {
                     fieldsList.add(i);
                 } else {
-                    fieldsList.remove(i);
+                    for (int j = 0; j < fieldsList.size(); j++) {
+                        if(fieldsList.get(j) == i){
+                            fieldsList.remove(j);
+                            break;
+                        }
+                    }
                 }
+                Collections.sort(fieldsList);
             });
 
             builder.setPositiveButton("OK", (dialogInterface, i) -> {
-                StringBuilder stringBuilder = new StringBuilder();
+                StringBuilder stringBuilder = new StringBuilder(), requestBuilder = new StringBuilder();
                 for (int j = 0; j < fieldsList.size(); j++) {
                     stringBuilder.append(fields[fieldsList.get(j)]);
+                    requestBuilder.append("\"").append(fields[fieldsList.get(j)]).append("\"");
                     if (j != fieldsList.size() - 1) {
                         stringBuilder.append(", ");
+                        requestBuilder.append(", ");
                     }
                 }
                 multiselect.setText(stringBuilder.toString());
+                requestFields = requestBuilder.toString();
             });
 
             builder.setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss());
 
             builder.setNeutralButton("Clear All", (dialogInterface, i) -> {
-                for (int j = 0; j < selectedFields.length; j++) {
-                    selectedFields[j] = false;
-                    fieldsList.clear();
-                    multiselect.setText("");
-                }
+                Arrays.fill(selectedFields, false);
+                fieldsList.clear();
+                multiselect.setText("");
+                requestFields = "";
             });
             builder.show();
         });
@@ -212,13 +231,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.start_layout);
         statusText = findViewById(R.id.statusText);
         statusText.setText(R.string.textview1);
-        String tablesURL = getString(R.string.tablesURL), connectionURL = getString(R.string.connectionURL), fieldsURL = getString(R.string.fieldsURL);
+        String tablesURL = getString(R.string.tablesURL),
+                connectionURL = getString(R.string.connectionURL),
+                fieldsURL = getString(R.string.fieldsURL);
 
         testConnection(connectionURL);
-        new GetDataByURL().execute(tablesURL);
-        while (!getDataFlag) {
-        }
-        getDataFlag = false;
+        dataConnection(tablesURL);
         setContentView(R.layout.object_select_layout);
         spinner = findViewById(R.id.spinner);
         multiselect = findViewById(R.id.multiselect);
@@ -233,12 +251,11 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(MainActivity.this, "Ваш выбор: " + tables[position], Toast.LENGTH_LONG).show();
-                new GetDataByURL().execute(fieldsURL+tables[position]);
-                while (!getDataFlag) { }
+                dataConnection(fieldsURL+tables[position]);
                 createFieldList(dataFromJSON);
                 Arrays.sort(fields);
                 selectedFields = new boolean[fields.length];
-                fieldsList=new ArrayList<>();
+                fieldsList = new ArrayList<>();
                 createMultiselectDropDownList();
             }
 
@@ -249,11 +266,10 @@ public class MainActivity extends AppCompatActivity {
 
 
         selectButton.setOnClickListener(v -> {
-            if (textField.getText().toString().trim().equals("")) {
-                Toast.makeText(MainActivity.this, R.string.no_text, Toast.LENGTH_LONG).show();
-            }
+            requestSQL = textField.getText().toString();
+            requestTable = "{ \"fields\" : [ " + requestFields + " ], \"filter\" : \"" + requestSQL + "\" }";
+            Log.d("Data Status", "Request Address successfully created. Request Address:" + requestTable);
         });
-
 
     }
 }
