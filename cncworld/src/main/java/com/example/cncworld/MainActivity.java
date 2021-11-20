@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private String[] tables, fields;
     private boolean[] selectedFields;
     private ArrayList<Integer> fieldsList;
-    private String requestSQL, requestFields, requestTable;
+    private String requestSQL, requestFields, requestTable, selectedTable;
 
 
     class ConnectByURL extends AsyncTask<String, String, String> {
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     URL url = new URL(urls[0]);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    switch (HTTPConnection(connection)) {
+                    switch (HTTPConnection(connection, "GET")) {
                         case 200:
                         case 201:
                             URLConnectionFlag = true;
@@ -72,13 +72,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(String... url) {
             try {
-                /*ArrayList<URL> urls = new ArrayList<>();
-                for (String str:url) {
-                    urls.add(new URL(str));
-                }*/
                 URL urls = new URL(url[0]);
                 HttpURLConnection connection = (HttpURLConnection) urls.openConnection();
-                switch (HTTPConnection(connection)) {
+                switch (HTTPConnection(connection, "GET")) {
                     case 200:
                     case 201:
                         getDataFlag = getData(connection);
@@ -101,9 +97,38 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public int HTTPConnection(HttpURLConnection connection) {
+    class PostDataByURL extends AsyncTask<String, String, String> {
+        @Override
+        protected String doInBackground(String... url) {
+            try {
+                URL urls = new URL(url[0]);
+                HttpURLConnection connection = (HttpURLConnection) urls.openConnection();
+                switch (HTTPConnection(connection, "GET")) {
+                    case 200:
+                    case 201:
+                        getDataFlag = getData(connection);
+                        return urls.toString();
+                }
+                return null;
+            } catch (Exception exception) {
+                Log.d("ERROR", exception.toString());
+            }
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... progress) {
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            Log.d("Data Status", "Data retrieved successfully. Data address:" + result);
+        }
+    }
+
+    public int HTTPConnection(HttpURLConnection connection, String method) {
         try {
-            connection.setRequestMethod("GET");
+            connection.setRequestMethod(method);
             connection.setConnectTimeout(5000);
             connection.setReadTimeout(5000);
             connection.connect();
@@ -172,8 +197,15 @@ public class MainActivity extends AppCompatActivity {
         URLConnectionFlag = false;
     }
 
-    public void dataConnection(String dataURL){
+    public void getDataConnection(String dataURL){
         new GetDataByURL().execute(dataURL);
+        while (!getDataFlag) {
+        }
+        getDataFlag = false;
+    }
+
+    public void postDataConnection(String dataURL, String data){
+        new PostDataByURL().execute(dataURL);
         while (!getDataFlag) {
         }
         getDataFlag = false;
@@ -233,10 +265,14 @@ public class MainActivity extends AppCompatActivity {
         statusText.setText(R.string.textview1);
         String tablesURL = getString(R.string.tablesURL),
                 connectionURL = getString(R.string.connectionURL),
-                fieldsURL = getString(R.string.fieldsURL);
+                fieldsURL = getString(R.string.fieldsURL),
+                selectURL = getString(R.string.selectURL),
+                insertURL = getString(R.string.insertURL),
+                updateURL = getString(R.string.updateURL),
+                deleteURL = getString(R.string.deleteURL);
 
         testConnection(connectionURL);
-        dataConnection(tablesURL);
+        getDataConnection(tablesURL);
         setContentView(R.layout.object_select_layout);
         spinner = findViewById(R.id.spinner);
         multiselect = findViewById(R.id.multiselect);
@@ -251,7 +287,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 Toast.makeText(MainActivity.this, "Ваш выбор: " + tables[position], Toast.LENGTH_LONG).show();
-                dataConnection(fieldsURL+tables[position]);
+                selectedTable = tables[position];
+                getDataConnection(fieldsURL+tables[position]);
                 createFieldList(dataFromJSON);
                 Arrays.sort(fields);
                 selectedFields = new boolean[fields.length];
@@ -260,15 +297,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-            }
+            public void onNothingSelected(AdapterView<?> parent) { }
         });
-
 
         selectButton.setOnClickListener(v -> {
             requestSQL = textField.getText().toString();
             requestTable = "{ \"fields\" : [ " + requestFields + " ], \"filter\" : \"" + requestSQL + "\" }";
-            Log.d("Data Status", "Request Address successfully created. Request Address:" + requestTable);
+            Log.d("Data Status", "Request Address successfully created. Request Address:" + selectURL + selectedTable);
+            postDataConnection(selectURL+selectedTable, requestTable);
+            Log.d("Data Status", dataFromJSON.toString());
         });
 
     }

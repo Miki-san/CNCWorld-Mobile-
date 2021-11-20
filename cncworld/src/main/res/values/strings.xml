@@ -5,6 +5,10 @@
     <string name="tablesURL">https://cnc-world-api.herokuapp.com/api/tables/</string>
     <string name="fieldsURL">https://cnc-world-api.herokuapp.com/api/table_desc/</string>
     <string name="connectionURL">https://cnc-world-api.herokuapp.com/api/docs/</string>
+    <string name="selectURL">https://cnc-world-api.herokuapp.com/api/select/</string>
+    <string name="insertURL">https://cnc-world-api.herokuapp.com/api/insert/</string>
+    <string name="deleteURL">https://cnc-world-api.herokuapp.com/api/delete/</string>
+    <string name="updateURL">https://cnc-world-api.herokuapp.com/api/update/</string>
     <string name="textview1">"Connecting to database…\nPlease wait"</string>
     <string name="multiselect_hint">Field select</string>
     <string name="no_text">Enter text please</string>
