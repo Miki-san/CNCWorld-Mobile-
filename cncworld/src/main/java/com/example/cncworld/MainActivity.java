@@ -1,6 +1,7 @@
 package com.example.cncworld;
 
 import android.app.AlertDialog;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -30,20 +31,12 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spinner;
     private TextView multiselect, statusText, textField;
     private Button selectButton;
-    private volatile boolean getDataFlag = false, URLConnectionFlag = false, selectFlag = false;
+    private volatile boolean getDataFlag = false, URLConnectionFlag = false;
     private JSONArray dataFromJSON;
     private String[] tables, fields;
     private boolean[] selectedFields;
     private ArrayList<Integer> fieldsList;
-    private String requestSQL, requestFields, requestTable, selectedTable, requestData,
-            tablesURL = getString(R.string.tablesURL),
-            connectionURL = getString(R.string.connectionURL),
-            fieldsURL = getString(R.string.fieldsURL),
-            selectURL = getString(R.string.selectURL),
-            insertURL = getString(R.string.insertURL),
-            updateURL = getString(R.string.updateURL),
-            deleteURL = getString(R.string.deleteURL);;
-    private int tableRow, tableColumn;
+    private String requestSQL, requestFields, requestTable, selectedTable, requestData;
 
 
     class ConnectByURL extends AsyncTask<String, String, String> {
@@ -288,7 +281,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 multiselect.setText(stringBuilder.toString());
                 requestFields = requestBuilder.toString();
-                tableColumn = fieldsList.size();
             });
 
             builder.setNegativeButton("Cancel", (dialogInterface, i) -> dialogInterface.dismiss());
@@ -303,7 +295,20 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void tableSelect(){
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.start_layout);
+        statusText = findViewById(R.id.statusText);
+        statusText.setText(R.string.textview1);
+        String tablesURL = getString(R.string.tablesURL),
+                connectionURL = getString(R.string.connectionURL),
+                fieldsURL = getString(R.string.fieldsURL),
+                selectURL = getString(R.string.selectURL);
+
+        testConnection(connectionURL);
+
         getDataConnection(tablesURL);
         setContentView(R.layout.object_select_layout);
         spinner = findViewById(R.id.spinner);
@@ -337,27 +342,10 @@ public class MainActivity extends AppCompatActivity {
             requestSQL = textField.getText().toString();
             requestTable = "{ \"fields\" : [ " + requestFields + " ], \"filter\" : \"" + requestSQL + "\" }";
             postDataConnection(selectURL + selectedTable);
-            selectFlag = true;
+            Intent intent = new Intent(MainActivity.this, TableActivity.class);
+            intent.putExtra("String", requestData);
+            startActivity(intent);
         });
-        while (!selectFlag){}
-        selectFlag = false;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.start_layout);
-        statusText = findViewById(R.id.statusText);
-        statusText.setText(R.string.textview1);
-
-        testConnection(connectionURL);
-
-        tableSelect();
-
-        setContentView(R.layout.table_layout);
-
-
-
 
     }
 }
