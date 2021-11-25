@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:minHeight="48dp"
-        tools:ignore="SpeakableTextPresentCheck"/>
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <TextView
         android:id="@+id/multiselect"
@@ -37,7 +37,6 @@
         android:layout_below="@id/multiselect"
         android:layout_marginTop="16dp"
         android:minHeight="48dp"
-        android:hint="@string/label"
         android:ems="10"
         android:inputType="text"/>
 

@@ -1,3 +1,2 @@
 include ':cncworld'
-include ':app'
 rootProject.name = "CNCworld"
