@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    tools:context=".MainActivity">
+    tools:context=".TableActivity">
 
     <Spinner
         android:id="@+id/spinner2"
@@ -30,8 +30,9 @@
         android:layout_below="@id/textView"
         android:layout_marginTop="16dp"
         android:ems="10"
-        android:inputType="text"
-        android:minHeight="48dp" />
+        android:inputType="textMultiLine"
+        android:minHeight="48dp"
+        android:maxHeight="160dp"/>
 
     <Button
         android:id="@+id/button4"
