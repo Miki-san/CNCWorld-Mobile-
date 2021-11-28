@@ -23,8 +23,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.HttpURLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -57,7 +55,7 @@ public class TableActivity extends AppCompatActivity {
         spinner.setAdapter(adapter);
     }
 
-    public static void normalizeJSON(JSONObject obj){
+    public static void normalizeJSON(JSONObject obj) {
         for (Iterator<String> it = obj.keys(); it.hasNext(); ) {
             String key = it.next();
             try {
@@ -69,18 +67,6 @@ public class TableActivity extends AppCompatActivity {
                 Log.d("normalizeJSON ERROR", e.toString());
             }
         }
-    }
-
-    public Boolean deleteData(HttpURLConnection connection) {
-        try {
-            byte[] postDataBytes = actionRequest.getBytes(StandardCharsets.UTF_8);
-            connection.getOutputStream().write(postDataBytes);
-            return true;
-        } catch (Exception exception) {
-            Log.d("deleteData ERROR", exception.toString());
-        }
-        Log.d("deleteData status", "Data retrieved unsuccessfully. Data address: " + connection.getURL().toString());
-        return false;
     }
 
     public void connectionToDB(String connectionURL, String method, String requestData) {
@@ -129,7 +115,7 @@ public class TableActivity extends AppCompatActivity {
                 Toast.makeText(TableActivity.this, "Ваш выбор: " + selectedId, Toast.LENGTH_LONG).show();
                 for (int i = 0; i < dataFromJSON.length(); i++) {
                     try {
-                        if(dataFromJSON.getJSONObject(i).get("id").toString().equals(selectedId)){
+                        if (dataFromJSON.getJSONObject(i).get("id").toString().equals(selectedId)) {
                             selectedObj = dataFromJSON.getJSONObject(i);
                             Gson gson = new GsonBuilder().setPrettyPrinting().create();
                             JsonElement jsonElement = new JsonParser().parse(selectedObj.toString());
@@ -154,16 +140,24 @@ public class TableActivity extends AppCompatActivity {
 
         deleteButton.setOnClickListener(v -> {
             actionRequest = "{ \"ids\": [" + selectedId + "] }";
-            connectionToDB(deleteURL+selectedTable, "DELETE", actionRequest);
+            connectionToDB(deleteURL + selectedTable, "DELETE", actionRequest);
             Intent intent = new Intent(TableActivity.this, MainActivity.class);
             startActivity(intent);
         });
 
+        addButton.setOnClickListener(v -> {
+            actionRequest = "{ \"data\": " + editText.getText() + "}";
+            connectionToDB(insertURL + selectedTable, "POST", actionRequest);
+            Intent intent = new Intent(TableActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
 
-
-
-
-
+        updateButton.setOnClickListener(v -> {
+            actionRequest = "{ \"id\": " + selectedId + ", \"data\": " + editText.getText() + "}";
+            connectionToDB(updateURL + selectedTable, "PATCH", actionRequest);
+            Intent intent = new Intent(TableActivity.this, MainActivity.class);
+            startActivity(intent);
+        });
 
 
     }

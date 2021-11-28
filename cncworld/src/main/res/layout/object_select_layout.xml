@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -28,7 +27,7 @@
         android:hint="@string/multiselect_hint"
         android:padding="12dp"
         app:drawableEndCompat="@android:drawable/arrow_down_float"
-        tools:ignore="TextContrastCheck"/>
+        tools:ignore="TextContrastCheck" />
 
     <EditText
         android:id="@+id/textField"
@@ -36,9 +35,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/multiselect"
         android:layout_marginTop="16dp"
-        android:minHeight="48dp"
         android:ems="10"
-        android:inputType="textMultiLine"/>
+        android:inputType="textMultiLine"
+        android:minHeight="48dp" />
 
     <Button
         android:id="@+id/selectButton"
@@ -46,8 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/textField"
         android:layout_alignParentEnd="true"
-        android:text="@string/button"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp"
+        android:text="@string/button" />
 
 
 </RelativeLayout>

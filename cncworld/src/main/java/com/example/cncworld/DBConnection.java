@@ -23,7 +23,7 @@ public class DBConnection extends AsyncTask<String, String, String> {
     }
 
     String unescape(String s) {
-        int i=0, len=s.length();
+        int i = 0, len = s.length();
         char c;
         StringBuffer sb = new StringBuffer(len);
         while (i < len) {
@@ -33,7 +33,7 @@ public class DBConnection extends AsyncTask<String, String, String> {
                     c = s.charAt(i++);
                     if (c == 'u') {
                         // TODO: check that 4 more chars exist and are all hex digits
-                        c = (char) Integer.parseInt(s.substring(i, i+4), 16);
+                        c = (char) Integer.parseInt(s.substring(i, i + 4), 16);
                         i += 4;
                     } // add other cases here as desired...
                 }
@@ -60,7 +60,11 @@ public class DBConnection extends AsyncTask<String, String, String> {
             byte[] postDataBytes = this.requestData.getBytes(StandardCharsets.UTF_8);
             connection.getOutputStream().write(postDataBytes);
             this.responseData = IOUtils.toString(connection.getInputStream(), StandardCharsets.UTF_8);
-            this.dataFromJSON = new JSONArray(unescape(this.responseData));
+            this.responseData = unescape(this.responseData);
+            if (this.responseData.charAt(0) != '[') {
+                this.responseData = "[" + this.responseData + "]";
+            }
+            this.dataFromJSON = new JSONArray(this.responseData);
             return true;
         } catch (Exception exception) {
             Log.d("postData ERROR", exception.toString());
@@ -68,6 +72,7 @@ public class DBConnection extends AsyncTask<String, String, String> {
         Log.d("postData status", "Data retrieved unsuccessfully. Data address: " + connection.getURL().toString());
         return false;
     }
+
 
     public Boolean deleteData(HttpURLConnection connection) {
         try {
@@ -91,13 +96,14 @@ public class DBConnection extends AsyncTask<String, String, String> {
                 case "GET":
                     connection.connect();
                     this.statusCode = connection.getResponseCode();
-                    switch (this.statusCode){
+                    switch (this.statusCode) {
                         case 200:
                         case 201:
                             this.flag = getData(connection);
                     }
                     break;
                 case "POST":
+                case "PATCH":
                     connection.setInstanceFollowRedirects(false);
                     connection.setUseCaches(false);
                     connection.setRequestProperty("Content-Type", "application/json; utf-8");
@@ -136,7 +142,7 @@ public class DBConnection extends AsyncTask<String, String, String> {
             HTTPConnection(connection, this.method);
             return this.url.toString();
         } catch (Exception e) {
-            Log.d(this.method+"ERROR", e.toString());
+            Log.d(this.method + "ERROR", e.toString());
         }
         return null;
     }
@@ -147,6 +153,6 @@ public class DBConnection extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String s) {
-        Log.d(this.method + " status", this.method+" Completed! " + this.method + " URL: "+ s + " Request data: " + this.requestData);
+        Log.d(this.method + " status", this.method + " Completed! " + this.method + " URL: " + s + " Request data: " + this.requestData);
     }
 }
