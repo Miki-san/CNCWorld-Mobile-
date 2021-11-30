@@ -2,6 +2,7 @@ package com.example.cncworld;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -98,6 +99,7 @@ public class TableActivity extends AppCompatActivity {
 
         spinner = findViewById(R.id.spinner2);
         textView = findViewById(R.id.textView);
+        textView.setMovementMethod(new ScrollingMovementMethod());
         editText = findViewById(R.id.textField2);
         addButton = findViewById(R.id.button);
         updateButton = findViewById(R.id.button2);

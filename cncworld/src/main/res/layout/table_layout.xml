@@ -20,6 +20,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/spinner2"
         android:layout_marginTop="16dp"
+        android:maxHeight="160dp"
+        android:minHeight="48dp"
         android:text="@string/dataView" />
 
     <EditText
